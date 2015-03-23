@@ -2,37 +2,67 @@ package com.trauzti.retrofitsample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.bind.DateTypeAdapter;
+
+import java.util.Date;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 
 
 public class MainActivity extends Activity {
+    public final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .create();
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("https://api.github.com")
+                .setConverter(new GsonConverter(gson))
                 .build();
+
+
 
         GitHubService service = restAdapter.create(GitHubService.class);
 
-        service.listRepos("octocat", new Callback<Repo>() {
+        final TextView tv = (TextView) findViewById(R.id.textContainer);
+
+        service.listRepos("trauzti", new Callback<List<Repo>>() {
             @Override
-            public void success(Repo repo, Response response) {
+            public void success(List<Repo> repos, Response response) {
+                String s = "";
+                for (Repo repo: repos) {
+                    s+= repo.name;
+                    s += "\n";
+                    Log.d(TAG, repo.name);
+                }
+                tv.setText(s);
 
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                Log.d(TAG, "Error!!");
             }
         });
 
