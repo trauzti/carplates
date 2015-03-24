@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">retrofitsample</string>
-
-    <string name="hello_world">retrofitsample</string>
+    <string name="app_name">carplates</string>
     <string name="action_settings">Settings</string>
 </resources>

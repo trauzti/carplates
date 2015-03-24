@@ -1,10 +1,11 @@
-package com.trauzti.retrofitsample;
+package com.trauzti.carplates;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.FieldNamingPolicy;
@@ -13,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.bind.DateTypeAdapter;
 
 import java.util.Date;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -25,6 +25,10 @@ import retrofit.converter.GsonConverter;
 public class MainActivity extends Activity {
     public final String TAG = MainActivity.class.getName();
 
+    private CarService carService;
+    private EditText etInputNumber;
+    private TextView tvTextContainer;
+    private RestAdapter restAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,37 +40,62 @@ public class MainActivity extends Activity {
                 .registerTypeAdapter(Date.class, new DateTypeAdapter())
                 .create();
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("https://api.github.com")
+
+        RestAdapter.LogLevel logLevel = RestAdapter.LogLevel.NONE;
+
+        if (BuildConfig.DEBUG) {
+            logLevel = RestAdapter.LogLevel.FULL;
+        }
+
+        restAdapter = new RestAdapter.Builder()
+//                .setEndpoint("https://api.github.com")
+                .setEndpoint("http://apis.is")
                 .setConverter(new GsonConverter(gson))
+                .setLogLevel(logLevel)
                 .build();
 
 
 
-        GitHubService service = restAdapter.create(GitHubService.class);
 
-        final TextView tv = (TextView) findViewById(R.id.textContainer);
+        tvTextContainer = (TextView) findViewById(R.id.textContainer);
+        etInputNumber = (EditText) findViewById(R.id.inputNumber);
 
-        service.listRepos("trauzti", new Callback<List<Repo>>() {
+
+
+
+        carService = restAdapter.create(CarService.class);
+
+
+
+    }
+
+
+    public void lookUpNumber(View view) {
+        carService.lookUpNumber(getNumber(), new Callback<CarResponse>() {
             @Override
-            public void success(List<Repo> repos, Response response) {
-                String s = "";
-                for (Repo repo: repos) {
-                    s+= repo.name;
-                    s += "\n";
-                    Log.d(TAG, repo.name);
+            public void success(CarResponse carResponse, Response response) {
+
+                if (carResponse == null || carResponse.results == null || carResponse.results.size() == 0) {
+                    tvTextContainer.setText("Ekkert fannst");
                 }
-                tv.setText(s);
+
+                for (RegistrationInfo registrationInfo : carResponse.results) {
+                    tvTextContainer.setText(registrationInfo.toString());
+                }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d(TAG, "Error!!");
+                tvTextContainer.setText("Villa kom upp");
+
             }
         });
 
+    }
 
+    public String getNumber() {
+        return etInputNumber.getText().toString();
     }
 
 
