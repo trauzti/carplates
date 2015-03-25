@@ -1,9 +1,8 @@
 package com.trauzti.carplates;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,6 +32,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tvTextContainer = (TextView) findViewById(R.id.textContainer);
+        etInputNumber = (EditText) findViewById(R.id.inputNumber);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
 
         Gson gson = new GsonBuilder()
@@ -48,25 +54,12 @@ public class MainActivity extends Activity {
         }
 
         restAdapter = new RestAdapter.Builder()
-//                .setEndpoint("https://api.github.com")
                 .setEndpoint("http://apis.is")
                 .setConverter(new GsonConverter(gson))
                 .setLogLevel(logLevel)
                 .build();
 
-
-
-
-        tvTextContainer = (TextView) findViewById(R.id.textContainer);
-        etInputNumber = (EditText) findViewById(R.id.inputNumber);
-
-
-
-
         carService = restAdapter.create(CarService.class);
-
-
-
     }
 
 
@@ -74,7 +67,6 @@ public class MainActivity extends Activity {
         carService.lookUpNumber(getNumber(), new Callback<CarResponse>() {
             @Override
             public void success(CarResponse carResponse, Response response) {
-
                 if (carResponse == null || carResponse.results == null || carResponse.results.size() == 0) {
                     tvTextContainer.setText("Ekkert fannst");
                 }
@@ -82,7 +74,6 @@ public class MainActivity extends Activity {
                 for (RegistrationInfo registrationInfo : carResponse.results) {
                     tvTextContainer.setText(registrationInfo.toString());
                 }
-
             }
 
             @Override
@@ -96,28 +87,5 @@ public class MainActivity extends Activity {
 
     public String getNumber() {
         return etInputNumber.getText().toString();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
