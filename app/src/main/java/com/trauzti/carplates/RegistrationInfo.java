@@ -6,40 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by traustis on 3/23/15.
  */
 public class RegistrationInfo {
-
-    @SerializedName("registryNumber")
-    public String registryNumber;
-
-    @SerializedName("number")
-    public String number;
-
-    @SerializedName("factoryNumber")
-    public String factoryNumber;
-
-    @SerializedName("type")
-    public String type;
-
-    @SerializedName("color")
-    public String color;
-
-    @SerializedName("status")
-    public String status;
-
-    @SerializedName("nextCheck")
-    public String nextCheck;
-
-    @SerializedName("pollution")
-    public String pollution;
-
-    @SerializedName("weight")
-    public String weight;
-
-    @SerializedName("subType")
-    public String subType;
-
-    @SerializedName("registeredAt")
-    public String registeredAt;
-
+    public String registryNumber, number, factoryNumber, type, color, status, nextCheck, pollution, weight, subType, registeredAt;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -55,7 +22,6 @@ public class RegistrationInfo {
         sb.append("Næsta skoðun: " + nextCheck + "\n");
         return sb.toString();
     }
-
 }
 
 /*
