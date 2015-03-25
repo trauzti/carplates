@@ -1,7 +1,5 @@
 package com.trauzti.carplates;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by traustis on 3/23/15.
  */
@@ -11,6 +9,7 @@ public class RegistrationInfo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Bílnúmer: " + number + "\n");
+        sb.append("Skráningarnúmer: " + registryNumber + "\n");
         sb.append("Verksmiðjunúmer: " + factoryNumber + "\n");
         sb.append("Litur: " + color + "\n");
         sb.append("Tegund: " + type + "\n");
